@@ -22,8 +22,7 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, {
 
 console.log("🚀 Attendance Bot running (Google Sheets)");
 
-const ADMIN_USERNAME = "guided_soulll";
-const ADMIN_USERNAME = "@Ibnu_umeyr";
+const ADMIN_USERNAMES = ["guided_soulll", "Ibnu_umeyr"];
 
 let attendanceOpen = false;
 let todayColumnIndex = null;
