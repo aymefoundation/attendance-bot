@@ -1,8 +1,21 @@
 require("dotenv").config();
+const http = require("http"); // 1. Add this
 
 const TelegramBot = require("node-telegram-bot-api");
 const { sheets, SPREADSHEET_ID, testConnection } = require("./googleSheets");
 
+// 2. Add the web server here
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Attendance Bot is active and running!\n");
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🚀 Web server active on port ${PORT}`);
+});
+
+// 3. Your bot initialization continues
 const bot = new TelegramBot(process.env.BOT_TOKEN, {
   polling: { interval: 300, autoStart: true },
 });
@@ -364,11 +377,11 @@ async function handleStatus(msg) {
 
   let text = `📊 STATUS\n\n👤 ${students[index][1]}\n✔ Present: ${present}\n❌ Absent: ${absent}\n📈 Percentage: ${percentage}`;
 
- if (percentValue < 70) {
-   text += `\n\n⚠️ ALERT: Low attendance (${percentage})`;
- } else {
-   text += `\n\n👍 Good attendance (${percentage})`;
- }
+  if (percentValue < 70) {
+    text += `\n\n⚠️ ALERT: Low attendance (${percentage})`;
+  } else {
+    text += `\n\n👍 Good attendance (${percentage})`;
+  }
   bot.sendMessage(msg.chat.id, text);
 }
 
