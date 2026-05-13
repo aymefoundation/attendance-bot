@@ -1,10 +1,10 @@
 require("dotenv").config();
-const http = require("http"); // 1. Add this
+const http = require("http");
 
 const TelegramBot = require("node-telegram-bot-api");
 const { sheets, SPREADSHEET_ID, testConnection } = require("./googleSheets");
 
-// 2. Add the web server here
+// Web server
 const server = http.createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end("Attendance Bot is active and running!\n");
@@ -15,14 +15,17 @@ server.listen(PORT, () => {
   console.log(`🚀 Web server active on port ${PORT}`);
 });
 
-// 3. Your bot initialization continues
+// Bot initialization
 const bot = new TelegramBot(process.env.BOT_TOKEN, {
   polling: { interval: 300, autoStart: true },
 });
 
 console.log("🚀 Attendance Bot running (Google Sheets)");
 
-const ADMIN_USERNAMES = ["guided_soulll", "Ibnu_umeyr"];
+// =======================
+// ADMIN USERNAMES
+// =======================
+const ADMIN_USERNAMES = ["guided_soulll", "ibnu_umeyr"];
 
 let attendanceOpen = false;
 let todayColumnIndex = null;
@@ -134,7 +137,7 @@ async function getStudents() {
 }
 
 // =======================
-// UPDATE STATS (FIXED)
+// UPDATE STATS
 // =======================
 async function updateStudentStats(row) {
   const headerRes = await sheets.spreadsheets.values.get({
@@ -198,7 +201,7 @@ bot.on("message", async (msg) => {
       return sendStudentMenu(chatId);
 
     case "👨‍💼 Admin":
-      if (username !== ADMIN_USERNAME) {
+      if (!ADMIN_USERNAMES.includes(username)) {
         return bot.sendMessage(chatId, "⛔ Not authorized");
       }
       return sendAdminMenu(chatId);
@@ -216,11 +219,11 @@ bot.on("message", async (msg) => {
       return handlePresent(msg);
 
     case "📅 Open Attendance":
-      if (username !== ADMIN_USERNAME) return;
+      if (!ADMIN_USERNAMES.includes(username)) return;
       return handleOpen(msg);
 
     case "🔒 Close Attendance":
-      if (username !== ADMIN_USERNAME) return;
+      if (!ADMIN_USERNAMES.includes(username)) return;
       return handleClose(msg);
 
     case "🗑 Delete Student":
@@ -259,7 +262,7 @@ bot.onText(/^\/register (.+)/, async (msg, match) => {
 });
 
 // =======================
-// OPEN ATTENDANCE (FIXED)
+// OPEN ATTENDANCE
 // =======================
 async function handleOpen(msg) {
   attendanceOpen = true;
@@ -309,7 +312,7 @@ async function handleOpen(msg) {
 }
 
 // =======================
-// PRESENT (FIXED)
+// PRESENT
 // =======================
 async function handlePresent(msg) {
   if (!attendanceOpen) {
@@ -341,7 +344,7 @@ async function handlePresent(msg) {
 }
 
 // =======================
-// STATUS (FIXED)
+// STATUS
 // =======================
 async function handleStatus(msg) {
   const username = (msg.from.username || "").toLowerCase();
@@ -382,6 +385,7 @@ async function handleStatus(msg) {
   } else {
     text += `\n\n👍 Good attendance (${percentage})`;
   }
+
   bot.sendMessage(msg.chat.id, text);
 }
 
@@ -394,12 +398,12 @@ async function handleClose(msg) {
 }
 
 // =======================
-// DELETE (FIXED)
+// DELETE
 // =======================
 bot.onText(/^\/delete (\d+)/, async (msg, match) => {
   const username = (msg.from.username || "").toLowerCase();
 
-  if (username !== ADMIN_USERNAME) {
+  if (!ADMIN_USERNAMES.includes(username)) {
     return bot.sendMessage(msg.chat.id, "⛔ Only admin");
   }
 
