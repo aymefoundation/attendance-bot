@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
   res.end("Attendance Bot is active and running!\n");
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
   console.log(`🚀 Web server active on port ${PORT}`);
 });
