@@ -160,7 +160,7 @@ bot.on("message", async (msg) => {
   if (text === "👨‍🎓 Student") return sendStudentMenu(chatId);
   if (text === "👨‍💼 Admin") return isAdmin(msg) ? sendAdminMenu(chatId) : bot.sendMessage(chatId, "⛔ Not authorized");
   if (text === "⬅️ Back To Main Menu") { delete registrationState[chatId]; return sendMainMenu(chatId); }
-  if (text === "📝 Register") return bot.sendMessage(chatId, "Use /register YourName");
+  if (text === "📝 Register") {   registrationState[chatId] = {     name: null,     startedAt: Date.now()   };    return bot.sendMessage(chatId, "👤 Please enter your full name:"); }
   if (text === "✅ Present") return handlePresent(msg);
   if (text === "📊 Status") return handleStatus(msg);
   if (text === "📅 Open Attendance" && isAdmin(msg)) return classPrompt(chatId, "open", "📚 Which class do you want to open?");
